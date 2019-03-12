@@ -9,7 +9,7 @@ environment:
     secure: 3U1Y6dN7CM4Der0Kf7jzO84v6wIZRiZ/zcoHs/XlJhkuFfydJ/4WC5TFbGaJYc7R
 install:
 - dotnet --info
-- dotnet tool install MarkdownSnippets.Tool --version 9.0.4 --tool-path tools
+- dotnet tool install MarkdownSnippets.Tool --version 9.1.0 --tool-path tools
 before_build:
 - git clone -b master --single-branch https://github.com/morelinq/morelinq.github.io _site
 build_script:

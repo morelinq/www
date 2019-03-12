@@ -16,7 +16,7 @@ The following software is required for building:
 Install MarkdownSnippets as a _local tool_ in the `tools` directory under the
 project root:
 
-    dotnet tool install MarkdownSnippets.Tool --version 9.0.4 --tool-path tools
+    dotnet tool install MarkdownSnippets.Tool --version 9.1.0 --tool-path tools
 
 Make sure that the project root is the current working directory of your
 command-line shell.
