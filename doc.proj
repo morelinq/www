@@ -1,15 +1,16 @@
 <Project>
 
   <ItemGroup>
-    <Watch Include="**/*.source.md" />
-    <Watch Include="**/*.cs" />
-    <Watch Remove="**/obj/**/*.cs" />
+    <Watch Include="docs.src/**/*.md" />
+    <Watch Remove="docs.src/**/README*" />
+    <Watch Include="code/**/*.cs" />
+    <Watch Remove="code/**/obj/**/*.cs" />
   </ItemGroup>
 
   <Target Name="Build">
     <MSBuild Projects="code\MoreLinq.Examples.csproj" Properties="Configuration=Debug" Targets="Restore;Build" />
     <Exec Command="$([System.IO.Path]::Combine('tools', 'mdsnippets'))" />
-    <Exec Command="dotnet script scripts/MoveMarkdownSourceTree.csx -- -v" />
+    <Exec Command="dotnet script scripts/CopyMarkdownTree.csx -- -v" />
   </Target>
 
   <!--

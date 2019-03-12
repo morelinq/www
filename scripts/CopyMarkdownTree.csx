@@ -18,36 +18,34 @@ var isDryRun = PopSwitch("--dry-run", "-n");
 var rootDirPath = Environment.CurrentDirectory;
 
 var srcDirPath = Path.Combine(rootDirPath, "docs.src");
-var moves =
+var copies =
     from path in Directory.EnumerateFiles(srcDirPath, "*.md", SearchOption.AllDirectories)
     where !path.StartsWith(".", StringComparison.Ordinal)
        && !path.EndsWith(".source.md", StringComparison.OrdinalIgnoreCase)
-       && File.Exists(Path.ChangeExtension(path, ".source.md"))
+       && !Path.GetFileNameWithoutExtension(path).Equals("README", StringComparison.OrdinalIgnoreCase)
     select new
     {
         Source = path,
         Destination = Path.Combine(rootDirPath, "docs", Path.GetRelativePath(srcDirPath, path)),
     };
 
-foreach (var move in moves)
+foreach (var copy in copies)
 {
     if (isDryRun)
     {
-        Console.WriteLine($"Will \"{move.Source}\" -> {move.Destination}\"");
+        Console.WriteLine($"Will \"{copy.Source}\" -> {copy.Destination}\"");
     }
     else
     {
-        log?.Invoke($"\"{move.Source}\" -> {move.Destination}\"");
+        log?.Invoke($"\"{copy.Source}\" -> {copy.Destination}\"");
 
-        var fileDestBasePath = Path.GetDirectoryName(move.Destination);
+        var fileDestBasePath = Path.GetDirectoryName(copy.Destination);
         if (!Directory.Exists(fileDestBasePath))
         {
             log?.Invoke($"Creating directory \"{fileDestBasePath}\"");
             Directory.CreateDirectory(fileDestBasePath);
         }
 
-        if (File.Exists(move.Destination))
-            File.Delete(move.Destination);
-        File.Move(move.Source, move.Destination);
+        File.Copy(copy.Source, copy.Destination, overwrite: true);
     }
 }
