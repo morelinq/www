@@ -1,5 +1,3 @@
-*.log
-*.aspx
-*.php
-[Ww]eb.config
-
+site/
+_site/
+tools/

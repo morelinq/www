@@ -1,0 +1,55 @@
+<Project>
+
+  <ItemGroup>
+    <Watch Include="**/*.source.md" />
+    <Watch Include="**/*.cs" />
+    <Watch Remove="**/obj/**/*.cs" />
+  </ItemGroup>
+
+  <Target Name="Build">
+    <MSBuild Projects="code\MoreLinq.Examples.csproj" Properties="Configuration=Debug" Targets="Restore;Build" />
+    <Exec Command="$([System.IO.Path]::Combine('tools', 'mdsnippets'))" />
+    <Exec Command="dotnet script scripts/MoveMarkdownSourceTree.csx -- -v" />
+  </Target>
+
+  <!--
+  Targets below were derived from:
+  https://github.com/aspnet/AspNetCore/blob/v2.2.2/src/Tools/dotnet-watch/src/assets/DotNetWatch.targets
+
+  See also "Custom watch projects" in:
+  https://github.com/aspnet/Docs/blob/a7609c3d5af84f9391f24dad02a00b660d849aa4/aspnetcore/tutorials/dotnet-watch.md#custom-watch-projects
+  -->
+
+  <!--
+  =========================================================================
+  GenerateWatchList
+
+  Main target called by dotnet-watch. This is the single-tfm version.
+  For multi-tfm version, see the Outer.targets file for description of the
+  design of this target.
+  =========================================================================
+  -->
+  <Target Name="GenerateWatchList"
+          DependsOnTargets="_CoreCollectWatchItems;_WriteGeneratedWatchList" />
+
+  <!--
+  =========================================================================
+  _CoreCollectWatchItems
+
+  Creates item group with default set of files to watch.
+
+  Returns: @(Watch)
+  =========================================================================
+  -->
+  <Target Name="_CoreCollectWatchItems" Returns="@(Watch)">
+    <!-- message used to debug -->
+    <Message Text="_DotNetWatchListFile = $(_DotNetWatchListFile)" />
+  </Target>
+
+  <Target Name="_WriteGeneratedWatchList" >
+    <WriteLinesToFile Overwrite="true"
+                      File="$(_DotNetWatchListFile)"
+                      Lines="@(Watch -> '%(FullPath)')" />
+  </Target>
+
+</Project>

@@ -1,0 +1,28 @@
+version: '{build}'
+image: Visual Studio 2017
+branches:
+  only:
+    - master
+skip_tags: true
+environment:
+  access_token:
+    secure: 3U1Y6dN7CM4Der0Kf7jzO84v6wIZRiZ/zcoHs/XlJhkuFfydJ/4WC5TFbGaJYc7R
+install:
+- dotnet --info
+- dotnet tool install MarkdownSnippets.Tool --version 9.0.4 --tool-path tools
+before_build:
+- git clone -b master --single-branch https://github.com/morelinq/morelinq.github.io _site
+build_script:
+- build.cmd
+on_success:
+- robocopy /s api site
+- robocopy /mir site _site /xd .git
+- cd _site
+- git config --global credential.helper store
+- ps: Add-Content "$HOME\.git-credentials" "https://$($env:access_token):x-oauth-basic@github.com`n"
+- git add .
+- git commit -m "morelinq/doc@%APPVEYOR_REPO_COMMIT%" --author "docbot <48450491+foobarbot@users.noreply.github.com>"
+- if defined APPVEYOR_PULL_REQUEST_NUMBER git show --summary
+- if not defined APPVEYOR_PULL_REQUEST_NUMBER git push
+artifacts:
+- path: _site
