@@ -1,4 +1,5 @@
 site_name: MoreLINQ
+docs_dir: docs.g
 theme:
   name: material
 repo_name: GitHub

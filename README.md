@@ -66,23 +66,6 @@ documents are not detected so after creating such a file, stop
 `dotnet watch build` (using <kbd>CTRL</kbd> + <kbd>C</kbd>) and re-launch it.
 
 
-## Editing
-
-Markdown documents are spread in two folders, namely `docs` and `docs.src`.
-Documents in `docs.src` contain references to code snippets in the code
-examples found in the `code` directory. During building, the references are
-replaced with the actual code snippet before the entire documentation is
-compiled under `site`.
-
-If a Markdown document will contain code snippets then put it under the
-`docs.src` directory and give it the extension `.source.md`. Otherwise, put it
-in the `docs` directory with the conventional file extension  of `.md`.
-
-If a Markdown document by the same name minus the extension exists in `docs`
-and `docs.src` then edit the one in `docs.src`. For example, if there exists
-`docs/foobar.md` and `docs/foobar.source.md` then the latter is the master.
-
-
 [MoreLINQ]: https://morelinq.github.io/
 [.NET]: https://dot.net/
 [MkDocs]: https://www.mkdocs.org/user-guide/deploying-your-docs/

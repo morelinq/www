@@ -17,7 +17,7 @@ var isDryRun = PopSwitch("--dry-run", "-n");
 
 var rootDirPath = Environment.CurrentDirectory;
 
-var srcDirPath = Path.Combine(rootDirPath, "docs.src");
+var srcDirPath = Path.Combine(rootDirPath, "docs");
 var copies =
     from path in Directory.EnumerateFiles(srcDirPath, "*.md", SearchOption.AllDirectories)
     where !path.StartsWith(".", StringComparison.Ordinal)
@@ -26,7 +26,7 @@ var copies =
     select new
     {
         Source = path,
-        Destination = Path.Combine(rootDirPath, "docs", Path.GetRelativePath(srcDirPath, path)),
+        Destination = Path.Combine(rootDirPath, "docs.g", Path.GetRelativePath(srcDirPath, path)),
     };
 
 foreach (var copy in copies)
