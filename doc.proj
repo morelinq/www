@@ -11,7 +11,7 @@
   <Target Name="Build">
     <MSBuild Projects="src/code/MoreLinq.Examples.csproj" Properties="Configuration=Debug" Targets="Restore;Build" />
     <Exec Command="$([System.IO.Path]::Combine('tools', 'mdsnippets')) src" />
-    <Exec Command="dotnet script scripts/CopyMarkdownTree.csx -- -v" />
+    <Exec Command="$([System.IO.Path]::Combine('tools', 'dotnet-script')) scripts/CopyMarkdownTree.csx -- -v" />
   </Target>
 
   <!--

@@ -9,14 +9,11 @@ Documentation is written in Markdown format and built using [MkDocs] and
 
 The following software is required for building:
 
-- [.NET] Core SDK 2.1 or later
+- [.NET] Core SDK 2.2 or later
 - Docker
-- [MarkdownSnippets] 9.0.4 or later
 
-Install MarkdownSnippets as a _local tool_ in the `tools` directory under the
-project root:
-
-    dotnet tool install MarkdownSnippets.Tool --version 9.1.0 --tool-path tools
+Other required tools can be installed by running `install.cmd` on Windows or
+`install.sh` on Linux/macOS.
 
 Make sure that the project root is the current working directory of your
 command-line shell.
