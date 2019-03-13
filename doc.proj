@@ -1,6 +1,7 @@
 <Project>
 
   <ItemGroup>
+    <Watch Include="*.proj" />
     <Watch Include="docs/**/*.md" />
     <Watch Remove="docs/**/README*" />
     <Watch Include="code/**/*.cs" />
