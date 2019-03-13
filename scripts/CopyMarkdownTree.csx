@@ -17,35 +17,87 @@ var isDryRun = PopSwitch("--dry-run", "-n");
 
 var rootDirPath = Environment.CurrentDirectory;
 
-var srcDirPath = Path.Combine(rootDirPath, "docs");
-var copies =
-    from path in Directory.EnumerateFiles(srcDirPath, "*.md", SearchOption.AllDirectories)
-    where !path.StartsWith(".", StringComparison.Ordinal)
-       && !path.EndsWith(".source.md", StringComparison.OrdinalIgnoreCase)
-       && !Path.GetFileNameWithoutExtension(path).Equals("README", StringComparison.OrdinalIgnoreCase)
-    select new
-    {
-        Source = path,
-        Destination = Path.Combine(rootDirPath, "docs.g", Path.GetRelativePath(srcDirPath, path)),
-    };
+var srcDirPath = Path.Combine(rootDirPath, "src", "docs");
+var targetDirPath = Path.Combine(rootDirPath, "docs");
 
-foreach (var copy in copies)
+bool ExcludeFile(string path)
+    => path.StartsWith(".", StringComparison.Ordinal)
+    || Path.GetFileNameWithoutExtension(path).Equals("README", StringComparison.OrdinalIgnoreCase);
+
+var sources =
+    from path in Directory.EnumerateFiles(srcDirPath, "*.md", SearchOption.AllDirectories)
+    where !ExcludeFile(path)
+    select (path, Path.GetRelativePath(srcDirPath, path));
+
+var relativeSourcePaths = new List<string>();
+
+foreach (var (path, relativePath) in sources)
 {
+    relativeSourcePaths.Add(relativePath);
+
+    if (path.EndsWith(".source.md", StringComparison.OrdinalIgnoreCase))
+        continue;
+
+    var targetPath = Path.Combine(targetDirPath, relativePath);
+
+    bool move = false;
+
+    if (targetPath.EndsWith(".r.md", StringComparison.OrdinalIgnoreCase))
+        targetPath = Path.ChangeExtension(Path.ChangeExtension(targetPath, null), ".md");
+    else
+        move = true;
+
     if (isDryRun)
     {
-        Console.WriteLine($"Will \"{copy.Source}\" -> {copy.Destination}\"");
+        Console.WriteLine($"Will {(move ? "move" : "copy")} \"{path}\" -> \"{targetPath}\"");
     }
     else
     {
-        log?.Invoke($"\"{copy.Source}\" -> {copy.Destination}\"");
+        log?.Invoke($"{(move ? "mv" : "cp")} \"{path}\" \"{targetPath}\"");
 
-        var fileDestBasePath = Path.GetDirectoryName(copy.Destination);
+        var fileDestBasePath = Path.GetDirectoryName(targetPath);
         if (!Directory.Exists(fileDestBasePath))
         {
             log?.Invoke($"Creating directory \"{fileDestBasePath}\"");
             Directory.CreateDirectory(fileDestBasePath);
         }
 
-        File.Copy(copy.Source, copy.Destination, overwrite: true);
+        if (move)
+        {
+            if (File.Exists(targetPath))
+                File.Delete(targetPath);
+            File.Move(path, targetPath);
+        }
+        else
+        {
+            File.Copy(path, targetPath, overwrite: true);
+        }
+    }
+}
+
+var relativeNormalSourcePathSet =
+    Enumerable.ToHashSet(
+        from s in relativeSourcePaths
+        select Path.ChangeExtension(Path.ChangeExtension(s, null), ".md"),
+        StringComparer.OrdinalIgnoreCase);
+
+var targets =
+    from path in Directory.EnumerateFiles(targetDirPath, "*.md", SearchOption.AllDirectories)
+    where !ExcludeFile(path)
+    select (path, Path.GetRelativePath(targetDirPath, path));
+
+foreach (var (path, relativePath) in targets)
+{
+    if (relativeNormalSourcePathSet.Contains(relativePath))
+        continue;
+
+    if (isDryRun)
+    {
+        Console.WriteLine($"Will delete \"{path}\"");
+    }
+    else
+    {
+        log?.Invoke($"rm \"{path}\"");
+        File.Delete(path);
     }
 }

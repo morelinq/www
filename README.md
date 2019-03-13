@@ -62,11 +62,15 @@ Otherwise run the following if on Linux or macOS:
 Next, open a Web browser and navigate to `http://localhost:8000/`.
 
 Note that due to a bug in `dotnet watch`, new C# source files or Markdown
-documents are not detected so after creating such a file, stop
-`dotnet watch build` (using <kbd>CTRL</kbd> + <kbd>C</kbd>) and re-launch it.
+documents are not detected so after creating such a file, _[touch]_ the
+`doc.proj` file or force-save in the editor. There are also known issues with
+Docker containers failing to sometimes pick up on file notifications on Windows.
+If that seems the case then _touching_ or force-saving the `mkdocs.yml` file
+usually fixes the situation.
 
 
 [MoreLINQ]: https://morelinq.github.io/
 [.NET]: https://dot.net/
 [MkDocs]: https://www.mkdocs.org/user-guide/deploying-your-docs/
 [MarkdownSnippets]: https://github.com/SimonCropp/MarkdownSnippets
+[touch]: https://en.wikipedia.org/wiki/Touch_(command)
